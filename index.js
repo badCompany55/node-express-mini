@@ -38,6 +38,18 @@ server.post('/api/users', (req, res) => {
 		.catch(err => console.log(err))
 })
 
+server.put('/api/users/:id', (req, res) => {
+	const id = req.params.id
+	const updateContent = req.body
+	users.update(id, updateContent)
+		.then(user => {
+			res.status(200).json({success_code: 1})
+		})
+		.catch(err => {
+			console.log(err)
+		})
+})
+
 server.listen(port, () => {
 	console.log(`Server is running on Port: ${port}`)
 })
