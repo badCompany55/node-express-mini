@@ -30,6 +30,14 @@ server.get(`/api/users/:id`, (req, res) => {
 		})
 })
 
+server.post('/api/users', (req, res) => {
+	users.insert(req.body)
+		.then(user => {
+			res.status(201).json({success: true})
+		})
+		.catch(err => console.log(err))
+})
+
 server.listen(port, () => {
 	console.log(`Server is running on Port: ${port}`)
 })
