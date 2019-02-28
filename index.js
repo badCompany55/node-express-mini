@@ -2,10 +2,19 @@
 const express = require("express");
 const users = require("./data/db.js");
 const server = express();
+let ids = [];
 
 const port = 5000;
 const parser = express.json();
 
+users.find().then(user => {
+  let uIds = user.map(user => {
+    return user.id;
+  });
+  ids.push(uIds);
+});
+
+console.log(ids);
 server.use(parser);
 
 server.get("/api/users", (req, res) => {
@@ -15,20 +24,31 @@ server.get("/api/users", (req, res) => {
       res.status(200).json(users);
     })
     .catch(err => {
-      console.log(err);
+      res
+        .status(500)
+        .json({ Error: "The users information could not be retrieved." });
     });
 });
 
 server.get(`/api/users/:id`, (req, res) => {
   const id = req.params.id;
-  users
-    .findById(id)
-    .then(user => {
-      res.status(200).json(user);
-    })
-    .catch(err => {
-      console.log(error);
-    });
+
+  if (ids.includes(id)) {
+    users
+      .findById(id)
+      .then(user => {
+        res.status(200).json(user);
+      })
+      .catch(err => {
+        res
+          .status(500)
+          .json({ Error: "The user information could not be retrieved." });
+      });
+  } else {
+    res
+      .status(404)
+      .json({ Message: "The user with the specified ID does not exisit" });
+  }
 });
 
 server.post("/api/users", (req, res) => {
@@ -36,9 +56,13 @@ server.post("/api/users", (req, res) => {
     users
       .insert(req.body)
       .then(user => {
-        res.status(201).json({ success: true });
+        res.status(201).json({ success: true, User: user });
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        res.status(500).json({
+          Error: "There was an error while saving the user to the database."
+        });
+      });
   } else {
     res.json({ errorMessage: "Please provide name and bio for the user." });
   }
