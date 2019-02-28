@@ -32,8 +32,9 @@ class App extends Component {
     axios
       .post(`http://www.localhost:5000/api/users`, user)
       .then(res => {
-        let newState = { ...this.state.users, user };
-        this.setState({ users: newState });
+        let newUsers = this.state.users.slice();
+        newUsers.push(user);
+        this.setState({ users: newUsers });
       })
       .catch(err => {
         console.log(err);
@@ -58,6 +59,9 @@ class App extends Component {
       });
   };
   render() {
+    {
+      console.log(this.state.users);
+    }
     return (
       <div className="App">
         <header> Users application</header>
