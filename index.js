@@ -97,11 +97,11 @@ server.put("/api/users/:id", (req, res) => {
 
 server.delete("/api/users/:id", (req, res) => {
   const id = req.params.id;
-  if (ids.includes(id)) {
+  if (ids.includes(Number(id))) {
     users
       .remove(id)
       .then(user => {
-        res.status(200).json({ success_code: user });
+        res.status(200).json({ success: id });
       })
       .catch(err => {
         res.status(500).json({ Error: "The user could not be removed." });
